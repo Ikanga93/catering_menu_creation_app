@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions, generics, serializers
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .models import Menu
 from .serializers import MenuSerializer, UserRegistrationSerializer, UserSerializer
@@ -65,36 +67,41 @@ class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
 
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
 def register_view(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('menu_list')
-    else:
-        form = UserCreationForm()
-    return render(request, 'menu_management/register.html', {'form': form})
+        if request.method == 'POST':
+            form = UserCreationForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                login(request, user)
+                return redirect('menu_list')
+        else:
+            form = UserCreationForm()
+        return render(request, 'menu_management/register.html', {'form': form})
 
 def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('menu_list')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'menu_management/login.html', {'form': form})
+        if request.method == 'POST':
+            form = AuthenticationForm(request, data=request.POST)
+            if form.is_valid():
+                user = form.get_user()
+                login(request, user)
+                return redirect('menu_list')
+        else:
+            form = AuthenticationForm()
+        return render(request, 'menu_management/login.html', {'form': form})
 
 def logout_view(request):
-    logout(request)
-    return redirect('login')
+        logout(request)
+        return redirect('login')
 
 def menu_list_view(request):
-    # Fetch menus from the database
-    menus = Menu.objects.filter(caterer=request.user)
-    return render(request, 'menu_management/menu_list.html', {'menus': menus})
+        # Fetch menus from the database
+        menus = Menu.objects.filter(caterer=request.user)
+        return render(request, 'menu_management/menu_list.html', {'menus': menus})
 
 '''
 Explanation:

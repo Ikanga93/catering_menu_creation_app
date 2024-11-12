@@ -32,3 +32,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email')  # Include other fields as necessary
+
+
+'''
+Explanation:
+MenuSerializer: Serializes the Menu model.
+UserRegistrationSerializer: Handles user registration with password confirmation.
+UserSerializer: Serializes the User model, which is needed in your views.py.
+'''
