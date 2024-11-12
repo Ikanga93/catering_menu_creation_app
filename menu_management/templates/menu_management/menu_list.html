@@ -1,0 +1,31 @@
+<!-- menu_management/templates/menu_management/menu_list.html -->
+{% extends 'menu_management/base.html' %}
+
+{% block title %}Your Menus{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Your Menus</h2>
+        <a href="{% url 'create_menu' %}" class="btn btn-success mb-3">Add New Menu</a>
+        <div class="row">
+            {% for menu in menus %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        {% if menu.image %}
+                            <img src="{{ menu.image.url }}" class="card-img-top" alt="{{ menu.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ menu.title }}</h5>
+                            <p class="card-text">{{ menu.description }}</p>
+                            <a href="{% url 'delete_menu' menu.id %}" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No menus available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

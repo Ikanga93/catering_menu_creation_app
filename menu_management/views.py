@@ -98,10 +98,14 @@ def logout_view(request):
         logout(request)
         return redirect('login')
 
+# @login_required
 def menu_list_view(request):
-        # Fetch menus from the database
+# Fetch menus from the database
+    if request.user.is_authenticated:
         menus = Menu.objects.filter(caterer=request.user)
-        return render(request, 'menu_management/menu_list.html', {'menus': menus})
+    else:
+        menus = []
+    return render(request, 'menu_management/menu_list.html', {'menus': menus})
 
 '''
 Explanation:
