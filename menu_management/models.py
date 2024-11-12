@@ -22,3 +22,13 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Profile"
+    
+'''
+Explanation:
+
+title: Name of the menu.
+description: Detailed description.
+image: Optional image representing the menu.
+caterer: Foreign key linking to the User who created the menu.
+created_at & updated_at: Timestamps for tracking.
+'''

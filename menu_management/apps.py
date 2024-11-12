@@ -7,3 +7,4 @@ class MenuManagementConfig(AppConfig):
 
     def ready(self):
         import menu_management.signals
+        
