@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions, generics, serializers
 from rest_framework.permissions import AllowAny
@@ -6,6 +6,8 @@ from .models import Menu
 from .serializers import MenuSerializer, UserRegistrationSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 # Homepage view
 
@@ -62,6 +64,37 @@ class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
+
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('menu_list')
+    else:
+        form = UserCreationForm()
+    return render(request, 'menu_management/register.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('menu_list')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'menu_management/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+def menu_list_view(request):
+    # Fetch menus from the database
+    menus = Menu.objects.filter(caterer=request.user)
+    return render(request, 'menu_management/menu_list.html', {'menus': menus})
 
 '''
 Explanation:

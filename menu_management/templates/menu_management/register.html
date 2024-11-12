@@ -1,0 +1,27 @@
+<!-- templates/menu_management/register.html -->
+{% extends 'menu_management/base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Register</h2>
+<form method="post" id="registerForm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+</div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        const password = document.getElementById('id_password1').value;
+        const confirmPassword = document.getElementById('id_password2').value;
+
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            alert('Passwords do not match!');
+        }
+    });
+</script>
+{% endblock %}

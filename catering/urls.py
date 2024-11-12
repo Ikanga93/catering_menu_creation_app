@@ -30,6 +30,7 @@ from menu_management import views as menu_views  # Import the view
 urlpatterns = [
     path('', menu_views.home, name='home'), # Homepage route
     path('admin/', admin.site.urls),
+    path('', include('menu_management.urls')),
     path('api/', include(menu_urls)),  # Include your app's URLs
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWT obtain
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # JWT refresh
