@@ -32,7 +32,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # JWT refresh
 
     # API Routes
-    path('api/', include('menu_management.api_urls')),  # Include API URLs under 'api/'
+    path('api/', include('menu_management.api_urls', namespace='api')),  # Include API URLs under 'api/'
 
     # Web Routes
     path('', include('menu_management.urls')),  # Include web URLs
