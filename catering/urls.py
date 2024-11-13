@@ -40,3 +40,11 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+'''
+Explanation:
+
+JWT Routes: Handled separately under 'api/token/' and 'api/token/refresh/'.
+API Routes: Included under 'api/' via menu_management.api_urls.
+Web Routes: Included at the root path ('') with the 'web' namespace, referencing menu_management.urls.
+'''

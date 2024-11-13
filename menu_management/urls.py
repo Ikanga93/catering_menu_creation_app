@@ -1,11 +1,9 @@
 # menu_management/urls.py
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import MenuViewSet, UserRegistrationView
+
+from django.urls import path
 from . import views
 
-router = DefaultRouter()
-router.register(r'menus', MenuViewSet, basename='menu')
+app_name = 'web'  # Namespace for web routes
 
 urlpatterns = [
     path('', views.home, name='home'),  # Homepage
@@ -16,3 +14,4 @@ urlpatterns = [
     path('menus/create/', views.create_menu_view, name='create_menu'),  # Create menu
     path('menus/delete/<int:menu_id>/', views.delete_menu_view, name='delete_menu'),  # Delete menu
 ]
+
