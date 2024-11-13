@@ -5,16 +5,18 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .models import Menu
+from .forms import MenuForm  # Ensure MenuForm is defined in forms.py
 from .serializers import MenuSerializer, UserRegistrationSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 # Homepage view
 
 def home(request):
-    return HttpResponse("<h1>Welcome to the Catering Management App</h1>")
+    return render(request, 'menu_management/home.html')  # Use a template for better UI
 
 class IsCaterer(permissions.BasePermission):
     """
@@ -40,7 +42,7 @@ class MenuViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(caterer=self.request.user)
-
+'''
 # User Registration View
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
@@ -61,16 +63,17 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+'''
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
-
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 def register_view(request):
         if request.method == 'POST':
@@ -107,6 +110,29 @@ def menu_list_view(request):
         menus = []
     return render(request, 'menu_management/menu_list.html', {'menus': menus})
 
+# Create Menu View
+@login_required
+def create_menu_view(request):
+    if request.method == 'POST':
+        form = MenuForm(request.POST, request.FILES)
+        if form.is_valid():
+            menu = form.save(commit=False)
+            menu.caterer = request.user
+            menu.save()
+            return redirect('web:menu_list')  # Use namespaced URL
+    else:
+        form = MenuForm()
+    return render(request, 'menu_management/create_menu.html', {'form': form})
+
+# Delete Menu View
+@login_required
+def delete_menu_view(request, menu_id):
+    try:
+        menu = Menu.objects.get(id=menu_id, caterer=request.user)
+        menu.delete()
+        return redirect('web:menu_list')  # Use namespaced URL
+    except Menu.DoesNotExist:
+        return HttpResponse("Menu not found or you don't have permission to delete it.", status=404)
 '''
 Explanation:
 

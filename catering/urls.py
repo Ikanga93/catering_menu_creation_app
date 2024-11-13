@@ -14,7 +14,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# Serve media files in development
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -24,16 +23,19 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from menu_management import urls as menu_urls  # Assuming your app is named 'menu_management'
-from menu_management import views as menu_views  # Import the view
 
 urlpatterns = [
-    path('', menu_views.home, name='home'), # Homepage route
     path('admin/', admin.site.urls),
-    path('', include('menu_management.urls')),
-    path('api/', include(menu_urls)),  # Include your app's URLs
+
+    # JWT Authentication Routes
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWT obtain
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # JWT refresh
+
+    # API Routes
+    path('api/', include('menu_management.api_urls')),  # Include API URLs under 'api/'
+
+    # Web Routes
+    path('', include('menu_management.urls')),  # Include web URLs
 ]
 
 if settings.DEBUG:
