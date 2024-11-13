@@ -1,5 +1,4 @@
 # menu_management/views.py
-
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions, generics
@@ -10,8 +9,8 @@ from .permissions import IsOwnerOrReadOnly
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .forms import MenuForm  # Ensure you have a MenuForm defined in forms.py
+from django.contrib.auth.forms import AuthenticationForm
+from .forms import MenuForm, UserLoginForm, UserRegistrationForm  # Ensure you have a MenuForm defined in forms.py
 
 # Homepage view
 def home(request):
@@ -60,19 +59,19 @@ class UserRegistrationView(generics.CreateAPIView):
 # Standalone View Functions
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             # Profile is automatically created via signals
             login(request, user)
             return redirect('web:menu_list')  # Use namespace
     else:
-        form = UserCreationForm()
+        form = UserRegistrationForm()
     return render(request, 'menu_management/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('username') # Note: 'username' holds the email
             password = form.cleaned_data.get('password')
@@ -83,9 +82,9 @@ def login_view(request):
                     login(request, user)
                     return redirect('web:menu_list')  # Use namespace
             except User.DoesNotExist:
-                pass
+                form.add_error(None, "Invalid email or password.")
     else:
-        form = AuthenticationForm()
+        form = UserLoginForm()
     return render(request, 'menu_management/login.html', {'form': form})
 
 def logout_view(request):

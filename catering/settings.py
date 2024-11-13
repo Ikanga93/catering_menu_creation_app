@@ -58,6 +58,18 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+    'menu_management.backends.EmailBackend',       # Custom email backend
+]
+'''
+Explanation:
+
+The custom EmailBackend allows users to authenticate using their email instead of the username.
+It's added after the default ModelBackend to maintain default behaviors.
+'''
+
 ROOT_URLCONF = 'catering.urls'
 
 TEMPLATES = [
