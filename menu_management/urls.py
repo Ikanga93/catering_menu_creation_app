@@ -7,6 +7,7 @@ from . import views
 
 app_name = 'web'  # Namespace for web routes
 
+
 urlpatterns = [
     path('', views.home, name='home'),  # Homepage
     path('register/', views.register_view, name='register'),  # Web registration
@@ -17,3 +18,9 @@ urlpatterns = [
     path('menus/delete/<int:menu_id>/', views.delete_menu_view, name='delete_menu'),  # Delete menu
 ]
 
+'''
+Explanation:
+
+MenuViewSet and UserViewSet: Handled by DRF's router.
+UserRegistrationView: Handles API-based user registration under 'api/register/'.
+'''

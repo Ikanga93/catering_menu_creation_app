@@ -9,6 +9,7 @@ from .serializers import MenuSerializer, UserRegistrationSerializer, UserSeriali
 from .permissions import IsOwnerOrReadOnly
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .forms import MenuForm  # Ensure you have a MenuForm defined in forms.py
 
@@ -62,6 +63,7 @@ def register_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # Profile is automatically created via signals
             login(request, user)
             return redirect('web:menu_list')  # Use namespace
     else:
@@ -72,9 +74,16 @@ def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('web:menu_list')  # Use namespace
+            email = form.cleaned_data.get('username') # Note: 'username' holds the email
+            password = form.cleaned_data.get('password')
+            try:
+                user_obj = User.object.get(email=email)
+                user = authenticate(request, username=user_obj.username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return redirect('web:menu_list')  # Use namespace
+            except User.DoesNotExist:
+                pass
     else:
         form = AuthenticationForm()
     return render(request, 'menu_management/login.html', {'form': form})
@@ -83,6 +92,7 @@ def logout_view(request):
     logout(request)
     return redirect('web:login')  # Use namespace
 
+@login_required
 def menu_list_view(request):
     # Fetch menus from the database
     if request.user.is_authenticated:
@@ -91,6 +101,7 @@ def menu_list_view(request):
         menus = []
     return render(request, 'menu_management/menu_list.html', {'menus': menus})
 
+@login_required
 def create_menu_view(request):
     if request.method == 'POST':
         form = MenuForm(request.POST, request.FILES)
@@ -103,6 +114,7 @@ def create_menu_view(request):
         form = MenuForm()
     return render(request, 'menu_management/create_menu.html', {'form': form})
 
+@login_required
 def delete_menu_view(request, menu_id):
     try:
         menu = Menu.objects.get(id=menu_id, caterer=request.user)
@@ -110,3 +122,24 @@ def delete_menu_view(request, menu_id):
         return redirect('web:menu_list')  # Use namespace
     except Menu.DoesNotExist:
         return HttpResponse("Menu not found or you don't have permission to delete it.", status=404)
+
+
+'''
+Explanation:
+
+register_view:
+
+Uses UserRegistrationForm for registration.
+On successful registration, logs the user in and redirects to the menu list.
+login_view:
+
+Uses UserLoginForm for login.
+Authenticates the user using the provided email and password.
+On successful login, redirects to the menu list.
+logout_view:
+
+Logs out the user and redirects to the login page.
+Menu Management Views:
+
+menu_list_view, create_menu_view, and delete_menu_view require the user to be logged in.
+'''

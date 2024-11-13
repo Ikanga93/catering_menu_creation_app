@@ -20,3 +20,10 @@ Explanation:
 API Routes: Registered under 'api/' in the project-level urls.py.
 No Additional 'api/' Prefix: Avoids routes like 'api/api/menus/'.
 '''
+
+'''
+Explanation:
+
+MenuViewSet and UserViewSet: Handled by DRF's router.
+UserRegistrationView: Handles API-based user registration under 'api/register/'.
+'''
