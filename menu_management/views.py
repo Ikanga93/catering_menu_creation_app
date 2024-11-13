@@ -62,9 +62,18 @@ def register_view(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Profile is automatically created via signals
-            login(request, user)
-            return redirect('web:menu_list')  # Use namespace
+            # Authenticate the user to retrieve the backend
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            if user is not None:
+                # Profile is automatically created via signals
+                login(request, user)
+                return redirect('web:menu_list')  # Use namespace
+            
+            else:
+                # Handle authentication failure
+                return HttpResponse("Authentication failed.", status=401)
     else:
         form = UserRegistrationForm()
     return render(request, 'menu_management/register.html', {'form': form})
@@ -76,7 +85,7 @@ def login_view(request):
             email = form.cleaned_data.get('username') # Note: 'username' holds the email
             password = form.cleaned_data.get('password')
             try:
-                user_obj = User.object.get(email=email)
+                user_obj = User.objects.get(email=email)
                 user = authenticate(request, username=user_obj.username, password=password)
                 if user is not None:
                     login(request, user)
