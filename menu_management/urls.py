@@ -1,6 +1,8 @@
 # menu_management/urls.py
 
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import MenuViewSet, UserRegistrationView
 from . import views
 
 app_name = 'web'  # Namespace for web routes

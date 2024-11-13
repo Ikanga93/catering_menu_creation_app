@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="text-center">
-    <h1>Welcome to Ofele, the Catering Menu Management Hub</h1>
+    <h1>Welcome to Ofele, the catering menu management hub</h1>
     {% if not user.is_authenticated %}
         <a href="{% url 'web:register' %}" class="btn btn-primary m-2">Register</a>
         <a href="{% url 'web:login' %}" class="btn btn-secondary m-2">Login</a>

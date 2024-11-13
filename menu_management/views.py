@@ -63,7 +63,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('web:home')  # Use namespace
+            return redirect('web:menu_list')  # Use namespace
     else:
         form = UserCreationForm()
     return render(request, 'menu_management/register.html', {'form': form})
@@ -74,7 +74,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('web:home')  # Use namespace
+            return redirect('web:menu_list')  # Use namespace
     else:
         form = AuthenticationForm()
     return render(request, 'menu_management/login.html', {'form': form})
