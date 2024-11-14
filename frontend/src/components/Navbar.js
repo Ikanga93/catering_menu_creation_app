@@ -6,7 +6,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 
 const Navbar = () => {
-    const { user, logoutUser } = useContext(AuthContext);
+    const { user, logoutUser } = useContext(AuthContext); // Destructure user and logoutUser from context
     const navigate = useNavigate();
 
     const handleLogout = () => {

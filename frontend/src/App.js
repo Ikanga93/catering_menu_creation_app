@@ -7,10 +7,16 @@ import Register from './components/Register';
 import Login from './components/Login';
 import MenuList from './components/MenuList';
 import CreateMenu from './components/CreateMenu';
+import EditMenu from './components/EditMenu';
 import PrivateRoute from './components/PrivateRoute';
+import { AuthProvider } from './contexts/AuthContext'; // Import AuthProvider
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+
 
 const App = () => {
   return (
+    <AuthProvider> {/* Wrap with AuthProvider */}
       <Router>
           <Navbar />
           <Routes>
@@ -33,9 +39,19 @@ const App = () => {
                       </PrivateRoute>
                   }
               />
+              <Route
+            path="/edit-menu/:id"
+            element={
+              <PrivateRoute>
+                <EditMenu />
+              </PrivateRoute>
+            }
+            />
               {/* Add other routes here */}
           </Routes>
+          <ToastContainer /> {/* Add ToastContainer for notifications */}
       </Router>
+    </AuthProvider>
   );
 };
 
