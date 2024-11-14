@@ -1,6 +1,6 @@
 // frontend/src/contexts/AuthContext.js
 
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null
     );
     const [user, setUser] = useState(() =>
-        localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access) : null
+        localStorage.getItem('authTokens') ? { jwtDecode }(JSON.parse(localStorage.getItem('authTokens')).access) : null
     );
 
     const loginUser = async (username, password) => {
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
             const response = await api.post('/api/token/', { username, password });
             if (response.status === 200) {
                 setAuthTokens(response.data);
-                setUser(jwt_decode(response.data.access));
+                setUser({ jwtDecode }(response.data.access));
                 localStorage.setItem('authTokens', JSON.stringify(response.data));
                 return true;
             }
@@ -42,14 +42,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logoutUser = () => {
+    const logoutUser = useCallback(() => {
         setAuthTokens(null);
         setUser(null);
         localStorage.removeItem('authTokens');
         toast.info('Logged out successfully.');
-    };
+    }, []);
 
-    const refreshToken = async () => {
+    const refreshToken = useCallback(async () => {
         if (!authTokens?.refresh) return;
         try {
             const response = await api.post('/api/token/refresh/', { refresh: authTokens.refresh });
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
                 access: response.data.access,
                 refresh: authTokens.refresh,
             });
-            setUser(jwt_decode(response.data.access));
+            setUser({ jwtDecode }(response.data.access));
             localStorage.setItem('authTokens', JSON.stringify({
                 access: response.data.access,
                 refresh: authTokens.refresh,
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
             console.error('Token refresh failed:', error);
             logoutUser();
         }
-    };
+    }, [authTokens, logoutUser]);
 
     useEffect(() => {
         if (authTokens) {
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
             }, 4 * 60 * 1000); // Refresh token every 4 minutes
             return () => clearInterval(interval);
         }
-    }, [authTokens]);
+    }, [authTokens, refreshToken]);
 
     return (
         <AuthContext.Provider value={{ user, authTokens, loginUser, registerUser, logoutUser }}>
@@ -84,3 +84,10 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+/*
+Explanation:
+
+useCallback: Memoizes the refreshToken function, ensuring it doesn't change between renders unless its dependencies change.
+useEffect Dependencies: Now includes refreshToken, which is stable due to useCallback.
+*/
