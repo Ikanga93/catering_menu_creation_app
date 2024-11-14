@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 # MenuSerializer
 class MenuSerializer(serializers.ModelSerializer):
     caterer = serializers.ReadOnlyField(source='caterer.username')  # Display username instead of ID
+    image = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Menu
