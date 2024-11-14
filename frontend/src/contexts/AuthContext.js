@@ -3,6 +3,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import api from '../services/api';
 import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 export const AuthContext = createContext();
 
@@ -45,17 +46,23 @@ export const AuthProvider = ({ children }) => {
         setAuthTokens(null);
         setUser(null);
         localStorage.removeItem('authTokens');
+        toast.info('Logged out successfully.');
     };
 
     const refreshToken = async () => {
-        if (!authTokens) return;
+        if (!authTokens?.refresh) return;
         try {
             const response = await api.post('/api/token/refresh/', { refresh: authTokens.refresh });
-            if (response.status === 200) {
-                setAuthTokens(response.data);
-                setUser(jwt_decode(response.data.access));
-                localStorage.setItem('authTokens', JSON.stringify(response.data));
-            }
+            setAuthTokens({
+                access: response.data.access,
+                refresh: authTokens.refresh,
+            });
+            setUser(jwt_decode(response.data.access));
+            localStorage.setItem('authTokens', JSON.stringify({
+                access: response.data.access,
+                refresh: authTokens.refresh,
+            }));
+            toast.info('Session refreshed.');
         } catch (error) {
             console.error('Token refresh failed:', error);
             logoutUser();
@@ -77,20 +84,3 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-
-/*
-Explanation:
-
-State Management:
-authTokens: Stores the JWT access and refresh tokens.
-user: Stores the decoded user information from the JWT.
-Functions:
-loginUser: Handles user login by obtaining JWT tokens.
-registerUser: Handles user registration.
-logoutUser: Clears authentication tokens and user state.
-refreshToken: Refreshes the access token using the refresh token.
-Effect Hook:
-Sets up an interval to refresh the token periodically.
-Provider:
-Provides authentication state and functions to the entire application.
-*/

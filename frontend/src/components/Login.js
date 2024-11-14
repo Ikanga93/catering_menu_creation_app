@@ -1,8 +1,9 @@
 // frontend/src/components/Login.js
 
 import React, { useState, useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -14,9 +15,10 @@ const Login = () => {
         e.preventDefault();
         const success = await loginUser(username, password);
         if (success) {
+            toast.success('Login successful!');
             navigate('/menus');
         } else {
-            alert('Login failed. Please check your credentials.');
+            toast.error('Login failed. Please check your credentials.');
         }
     };
 
