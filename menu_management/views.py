@@ -5,11 +5,11 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
-# from .models import Menu
+from .models import Menu
 from .serializers import MenuSerializer, UserRegistrationSerializer, UserSerializer
-# from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly
 from django.contrib.auth.models import User
-# from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout
 # from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.forms import AuthenticationForm
 # from .forms import MenuForm, UserLoginForm, UserRegistrationForm  # Ensure you have a MenuForm defined in forms.py
@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 class HomeAPIView(APIView):
     def get(self, request):
         return Response({"message": "Welcome to the Catering Management App"})
-'''    
+   
 class IsCaterer(permissions.BasePermission):
     """
     Custom permission to only allow caterers to create menus.
@@ -52,7 +52,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-'''
+
 # User Registration View (API)
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()

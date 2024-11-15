@@ -34,8 +34,6 @@ urlpatterns = [
     # API Routes
     path('api/', include('menu_management.api_urls', namespace='api')),  # Include API URLs under 'api/'
 
-    # Web Routes
-    # path('', include('menu_management.urls')),  # Include web URLs
 ]
 
 if settings.DEBUG:
