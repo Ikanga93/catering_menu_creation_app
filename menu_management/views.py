@@ -5,14 +5,14 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Menu
+# from .models import Menu
 from .serializers import MenuSerializer, UserRegistrationSerializer, UserSerializer
-from .permissions import IsOwnerOrReadOnly
+# from .permissions import IsOwnerOrReadOnly
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
-from .forms import MenuForm, UserLoginForm, UserRegistrationForm  # Ensure you have a MenuForm defined in forms.py
+# from django.contrib.auth import login, authenticate, logout
+# from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.forms import AuthenticationForm
+# from .forms import MenuForm, UserLoginForm, UserRegistrationForm  # Ensure you have a MenuForm defined in forms.py
 
 # Homepage view
 class HomeAPIView(APIView):
