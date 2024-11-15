@@ -2,6 +2,7 @@
 
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import api from '../services/api'; // Add this line
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
