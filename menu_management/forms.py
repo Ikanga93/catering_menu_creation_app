@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-
+'''
 class MenuForm(forms.ModelForm):
     class Meta:
         model = Menu
@@ -36,7 +36,7 @@ class UserLoginForm(AuthenticationForm):
             return user.username
         except User.DoesNotExist:
             raise ValidationError("Invalid email or password.")
-
+'''
 '''
 Explanation:
 

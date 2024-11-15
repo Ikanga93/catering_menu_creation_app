@@ -18,7 +18,7 @@ from .forms import MenuForm, UserLoginForm, UserRegistrationForm  # Ensure you h
 class HomeAPIView(APIView):
     def get(self, request):
         return Response({"message": "Welcome to the Catering Management App"})
-    
+'''    
 class IsCaterer(permissions.BasePermission):
     """
     Custom permission to only allow caterers to create menus.
@@ -133,7 +133,7 @@ def delete_menu_view(request, menu_id):
         return redirect('web:menu_list')  # Use namespace
     except Menu.DoesNotExist:
         return HttpResponse("Menu not found or you don't have permission to delete it.", status=404)
-
+'''
 
 '''
 Explanation:
