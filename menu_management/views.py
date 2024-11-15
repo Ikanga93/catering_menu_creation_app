@@ -1,6 +1,4 @@
 # menu_management/views.py
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from rest_framework import viewsets, permissions, generics
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -9,12 +7,8 @@ from .models import Menu
 from .serializers import MenuSerializer, UserRegistrationSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate, logout
-# from django.contrib.auth.decorators import login_required
-# from django.contrib.auth.forms import AuthenticationForm
-# from .forms import MenuForm, UserLoginForm, UserRegistrationForm  # Ensure you have a MenuForm defined in forms.py
 
-# Homepage view
+# Homepage API view
 class HomeAPIView(APIView):
     def get(self, request):
         return Response({"message": "Welcome to the Catering Management App"})

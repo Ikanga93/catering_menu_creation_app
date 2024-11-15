@@ -3,6 +3,8 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -17,12 +19,15 @@ const Register = () => {
             alert('Passwords do not match');
             return;
         }
-        const success = await registerUser(username, password, password2);
-        if (success) {
-            alert('Registration successful! Please log in.');
-            navigate('/login');
-        } else {
-            alert('Registration failed. Please try again.');
+        try {
+            const response = await api.post('/register/', { username, password, password2 });
+            if (response.status === 201) {
+                toast.success("Registration successful! Please log in.");
+                navigate('/login');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Registration failed. Please try again.");
         }
     };
 
