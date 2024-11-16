@@ -9,10 +9,11 @@ import { toast } from 'react-toastify';
 
 const Register = () => {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState(''); // New email state
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
-    const { registerUser } = useContext(AuthContext);
     const navigate = useNavigate();
+    const { registerUser } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,8 +21,14 @@ const Register = () => {
             alert('Passwords do not match');
             return;
         }
+        if (!email) {
+            toast.error("Email is required.");
+            return;
+        }
+        // Optionally, add email format validation here
+
         try {
-            const response = await api.post('/register/', { username, password, password2 });
+            const response = await api.post('/register/', { username, email, password, password2 });
             if (response.status === 201) {
                 toast.success("Registration successful! Please log in.");
                 navigate('/login');
@@ -36,6 +43,7 @@ const Register = () => {
         <div className="container mt-5">
             <h2>Register</h2>
             <form onSubmit={handleSubmit}>
+                {/* Username Field */}
                 <div className="mb-3">
                     <label htmlFor="username" className="form-label">Username</label>
                     <input
@@ -47,6 +55,21 @@ const Register = () => {
                         required
                     />
                 </div>
+
+                {/* Email Field */}
+                <div className="mb-3">
+                    <label htmlFor="email" className="form-label">Email</label>
+                    <input
+                        type="email" // Ensures email format
+                        className="form-control"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </div>
+
+                 {/* Password Field */}
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Password</label>
                     <input
@@ -58,6 +81,8 @@ const Register = () => {
                         required
                     />
                 </div>
+
+                {/* Confirm Password Field */}
                 <div className="mb-3">
                     <label htmlFor="password2" className="form-label">Confirm Password</label>
                     <input
@@ -69,6 +94,7 @@ const Register = () => {
                         required
                     />
                 </div>
+                
                 <button type="submit" className="btn btn-primary">Register</button>
             </form>
         </div>
