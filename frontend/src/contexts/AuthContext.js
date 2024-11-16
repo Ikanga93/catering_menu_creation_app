@@ -22,22 +22,33 @@ export const AuthProvider = ({ children }) => {
         setAuthTokens(response.data);
         setUser(jwtDecode(response.data.access));
         localStorage.setItem('authTokens', JSON.stringify(response.data));
+        toast.success('Logged in successfully!');
         return true;
       }
     } catch (error) {
       console.error('Login failed:', error);
+      toast.error('Login failed. Please check your credentials.');
       return false;
     }
   };
 
-  const registerUser = async (username, password, password2) => {
+  const registerUser = async (username, email, password, password2) => {
     try {
-      const response = await api.post('/api/register/', { username, password, password2 });
+      const response = await api.post('/api/register/', { username, email, password, password2 });
       if (response.status === 201) {
+        toast.success('Registration successful! Please log in.');
         return true;
       }
     } catch (error) {
       console.error('Registration failed:', error);
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
+        Object.keys(errors).forEach(key => {
+          toast.error(`${key}: ${errors[key]}`);
+        });
+      } else {
+        toast.error('Registration failed. Please try again.');
+      }
       return false;
     }
   };
@@ -49,6 +60,8 @@ export const AuthProvider = ({ children }) => {
     toast.info('Logged out successfully.');
   }, []);
 
+
+  // Function to refresh JWT token
   const refreshToken = useCallback(async () => {
     if (!authTokens?.refresh) return;
     try {
@@ -69,6 +82,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [authTokens, logoutUser]);
 
+  // Effect to periodically refresh token
   useEffect(() => {
     if (authTokens) {
       const interval = setInterval(() => {
